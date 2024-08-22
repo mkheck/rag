@@ -1,8 +1,11 @@
 package com.thehecklers.rag_demo;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -14,9 +17,11 @@ import java.net.MalformedURLException;
 
 @RestController
 public class RagController {
+    private final ChatClient client;
     private final VectorStore db;
 
-    public RagController(VectorStore db) {
+    public RagController(ChatClient.Builder builder, VectorStore db) {
+        this.client = builder.build();
         this.db = db;
     }
 
@@ -60,5 +65,14 @@ public class RagController {
         logger.info("Vector store population complete!");
 
         return "Populated vector store with " + filepath;
+    }
+
+    @GetMapping("/rag")
+    public String getRagResponse(@RequestParam(defaultValue = "Airspeeds") String message) {
+        return client.prompt()
+                .user(message)
+                .advisors(new QuestionAnswerAdvisor(db, SearchRequest.defaults()))
+                .call()
+                .content();
     }
 }

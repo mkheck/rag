@@ -1,8 +1,11 @@
 package com.thehecklers.rag_demo;
 
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -14,19 +17,28 @@ import java.net.MalformedURLException;
 
 @RestController
 public class RagController {
+    private final ChatClient client;
     private final VectorStore db;
 
-    public RagController(VectorStore db) {
+    public RagController(ChatClient.Builder builder, VectorStore db) {
+        this.client = builder.build();
         this.db = db;
     }
 
     @GetMapping
     public String describe() {
         return """
-                This is an application to populate a vector store with embeddings for a supplied document.
-                To use, simply provide a file path or URL that resolves to the document to be processed:
+                This is an application to populate and query a vector store, effectively turning loose 
+                an AI on your data. This is a potentially powerful, focused tool, so as always, *verify your results*.
+                
+                To populate the vector store with embeddings for a supplied document, simply provide a 
+                file path or URL that resolves to the document to be processed:
                 
                 /populate?filepath=<path or URL>
+                
+                To query the vector store for documents/data that matches your query, use the following endpoint:
+                
+                /rag?message=<your query>
                 
                 DISCLAIMER: No warranty is provided or implied. Use at your own risk. :)
                 """;
@@ -53,5 +65,14 @@ public class RagController {
         logger.info("Vector store population complete!");
 
         return "Populated vector store with " + filepath;
+    }
+
+    @GetMapping("/rag")
+    public String getRagResponse(@RequestParam(defaultValue = "Airspeeds") String message) {
+        return client.prompt()
+                .user(message)
+                .advisors(new QuestionAnswerAdvisor(db, SearchRequest.defaults()))
+                .call()
+                .content();
     }
 }

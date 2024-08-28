@@ -1,8 +1,10 @@
 package com.thehecklers.rag_demo;
 
+import com.azure.ai.openai.OpenAIClient;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 @RestController
 public class RagController {
@@ -60,7 +63,25 @@ public class RagController {
 
         logger.info("Populating vector store with " + filepath);
 
+        // MH: If you have sufficient rate limits/quota, uncomment this line and let 'er rip!
         db.add(splitter.apply(tikaDocumentReader.get()));
+        // MH: OTOH, if you're hamstrung by rate limits, employ this less elegant workaround:
+        // List<Document> docs = splitter.apply(tikaDocumentReader.get());
+        // Write for loop like this but with 1 second delay between db.add() calls
+        // docs.forEach(doc -> db.add(List.of(doc)));
+
+        // Or use this Stream API call to add a 1 second delay between each db.add() call
+        /*docs.forEach(System.out::println);
+        docs.forEach(doc -> {
+            logger.info("Saving doc: " + doc);
+            db.add(List.of(doc));
+            try {
+                logger.info("Saved doc: " + doc);
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });*/
 
         logger.info("Vector store population complete!");
 

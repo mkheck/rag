@@ -20,6 +20,8 @@ The `samples` directory in particular consists of foundational proofs of concept
 
 Before running the Azure version, you'll need to create the appropriate resources in Azure, of course. Please refer to https://github.com/mkheck/aoai[this repo] for sample scripts that can be used to create those resources.
 
+IMPORTANT: Before creating and running resources on any cloud platform, check estimated costs for the resources you're about to create and run those resources only as long as you need to do so; this will maximize your results while minimizing your costs. For Azure, please use the https://azure.microsoft.com/en-us/pricing/calculator/[Azure Pricing Calculator] to determine your needs and anticipated costs.
+
 == OpenAI and Chroma sample specifics
 
 Before running the OAI+Chroma version, you'll need to have Chroma running locally. One way to do so is just to run it via local Docker like so:

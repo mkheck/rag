@@ -1,0 +1,35 @@
+= Retrieval Augmented Generation samples and guidance
+
+== Maintainer
+
+* Mark Heckler
+* mailto:mark@thehecklers.com[mark@thehecklers.com]
+* mailto:mark.heckler@gmail.com[mark.heckler@gmail.com]
+* https://x.com/mkheck[@mkheck on X]
+
+== Purpose
+
+This repo serves as the center of gravity for resources I've created and/or collected that demonstrate, experiment with, guide use of, or expound upon current best practices for Retrieval Augmented Generation.
+
+The `samples` directory in particular consists of foundational proofs of concept: actual code implementations of varying complexities, but starting from the very simple of course. Currently this consists of the following sample projects using Java and Spring Boot:
+
+* azureopenai_azureaisearch/rag-demo - Azure OpenAI for chat and embeddings, Azure AI Search as vector store
+* openai_chroma/rag-demo - OpenAI for chat and embeddings, Chroma as vector store
+
+== Azure OpenAI and Azure AI Search sample specifics
+
+Before running the Azure version, you'll need to create the appropriate resources in Azure, of course. Please refer to https://github.com/mkheck/aoai[this repo] for sample scripts that can be used to create those resources.
+
+== OpenAI and Chroma sample specifics
+
+Before running the OAI+Chroma version, you'll need to have Chroma running locally. One way to do so is just to run it via local Docker like so:
+
+`docker run -d --name chroma -p 8000:8000 chromadb/chroma`
+
+== Essential information for both versions
+
+Before running _either_ version, you'll also need to provide those same values via variables, in one form or another, to your Spring AI-based application per https://docs.spring.io/spring-boot/reference/features/external-config.html[the Spring Boot docs reference on Externalized Configuration]. Please refer to the https://docs.spring.io/spring-ai/reference/[Spring AI documentation for the variables applicable to your choice of models/implementations].
+
+== In conclusion
+
+Please star+watch to be notified of updates, as there will be _many_.

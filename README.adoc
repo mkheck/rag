@@ -39,6 +39,8 @@ I ran the Llama 3 model using Ollama on my Mac, but it too can be run using Dock
 
 `ollama run llama3`
 
+NOTE: In this sample's `application.properties` file, I've commented out the line to initialize the Chroma schema. This line needs to be **uncommented** the first time the application is run on a fresh database, otherwise a runtime error will result. For subsequent executions, you will likely want to comment it out again or remove it, but it does serve as a useful reminder. :)
+
 == Essential information for both versions
 
 Before running _either_ version, you'll also need to provide those same values via variables, in one form or another, to your Spring AI-based application per https://docs.spring.io/spring-boot/reference/features/external-config.html[the Spring Boot docs reference on Externalized Configuration]. Please refer to the https://docs.spring.io/spring-ai/reference/[Spring AI documentation for the variables applicable to your choice of models/implementations].

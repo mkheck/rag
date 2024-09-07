@@ -29,7 +29,7 @@ Before running the OAI+Chroma version, you'll need to have Chroma running locall
 
 `docker run -d --name chroma -p 8000:8000 chromadb/chroma`
 
-== OpenAI and Chroma sample specifics
+== Llama and Chroma sample specifics
 
 Before running the Llama+Chroma version, you'll need to have Chroma running locally. One way to do so is just to run it via local Docker like so:
 

@@ -15,6 +15,7 @@ The `samples` directory in particular consists of foundational proofs of concept
 
 * azureopenai_azureaisearch/rag-demo - Azure OpenAI for chat and embeddings, Azure AI Search as vector store
 * openai_chroma/rag-demo - OpenAI for chat and embeddings, Chroma as vector store
+* llama_chroma/rag-demo - https://ollama.com/library/llama3[Llama 3] model running locally in https://ollama.ai[ollama], Chroma as vector store
 
 == Azure OpenAI and Azure AI Search sample specifics
 
@@ -27,6 +28,16 @@ IMPORTANT: Before creating and running resources on any cloud platform, check es
 Before running the OAI+Chroma version, you'll need to have Chroma running locally. One way to do so is just to run it via local Docker like so:
 
 `docker run -d --name chroma -p 8000:8000 chromadb/chroma`
+
+== OpenAI and Chroma sample specifics
+
+Before running the Llama+Chroma version, you'll need to have Chroma running locally. One way to do so is just to run it via local Docker like so:
+
+`docker run -d --name chroma -p 8000:8000 chromadb/chroma`
+
+I ran the Llama 3 model using Ollama on my Mac, but it too can be run using Docker, of course. To run the model using ollama, here is the command I used:
+
+`ollama run llama3`
 
 == Essential information for both versions
 

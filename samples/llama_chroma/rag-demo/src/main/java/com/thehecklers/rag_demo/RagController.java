@@ -3,25 +3,33 @@ package com.thehecklers.rag_demo;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.model.Media;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 
 @RestController
 public class RagController {
     private final ChatClient client;
+    private final ChatModel chatModel;
     private final VectorStore db;
 
-    public RagController(ChatClient.Builder builder, VectorStore db) {
+    public RagController(ChatClient.Builder builder, ChatModel chatModel, VectorStore db) {
         this.client = builder.build();
+        this.chatModel = chatModel;
         this.db = db;
     }
 
@@ -74,5 +82,26 @@ public class RagController {
                 .advisors(new QuestionAnswerAdvisor(db, SearchRequest.defaults()))
                 .call()
                 .content();
+    }
+
+    @GetMapping("/mm")
+    public String getMultimodalResponse(@RequestParam(defaultValue = "/Users/markheckler/files/testimage.jpg") String imagePath,
+                                        @RequestParam(defaultValue = "What's in this image?") String message) throws MalformedURLException {
+        var imageType = imagePath.endsWith(".png") ? MimeTypeUtils.IMAGE_PNG : MimeTypeUtils.IMAGE_JPEG;
+        var media = imagePath.startsWith("http")
+                ? new Media(imageType, new URL(imagePath))
+                : new Media(imageType, new FileSystemResource(imagePath));
+
+        var userMessage = new UserMessage(message, media);
+        var systemMessage = new SystemMessage("If you can't definitively identify the image, make your best guess.");
+
+        return chatModel.call(userMessage, systemMessage);
+    }
+
+    @GetMapping("/imagerag")
+    public String getImageRagResponse(@RequestParam(defaultValue = "/Users/markheckler/files/testimage.jpg") String imagePath,
+                                      @RequestParam(defaultValue = "Tell me everything you can about this image") String message) throws MalformedURLException {
+        // First analyze the image using AI, then use RAG to search our docs for information specific to our domain
+        return getRagResponse(getMultimodalResponse(imagePath, message));
     }
 }

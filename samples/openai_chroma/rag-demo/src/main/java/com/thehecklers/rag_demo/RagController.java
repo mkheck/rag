@@ -52,6 +52,16 @@ public class RagController {
                 """;
     }
 
+    // Baseline endpoint, non-RAG queries
+    @GetMapping("/query")
+    public String query(@RequestParam String message) {
+        return client
+                .prompt()
+                .user(message)
+                .call()
+                .content();
+    }
+
     @GetMapping("/populate")
     public String populate(@RequestParam String filepath) throws MalformedURLException {
         /*

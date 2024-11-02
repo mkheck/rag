@@ -16,6 +16,7 @@ The `samples` directory in particular consists of foundational proofs of concept
 * azureopenai_azureaisearch/rag-demo - Azure OpenAI for chat and embeddings, Azure AI Search as vector store
 * openai_chroma/rag-demo - OpenAI for chat and embeddings, Chroma as vector store
 * llama_chroma/rag-demo - https://ollama.com/library/llama3[Llama 3] model running locally in https://ollama.ai[ollama], Chroma as vector store
+* openai_neo4j/rag-demo - OpenAI for chat and embeddings, Neo4j as vector store
 
 == Azure OpenAI and Azure AI Search sample specifics
 
@@ -40,6 +41,14 @@ I ran the Llama 3 model using Ollama on my Mac, but it too can be run using Dock
 `ollama run llama3`
 
 NOTE: In this sample's `application.properties` file, I've commented out the line to initialize the Chroma schema. This line needs to be **uncommented** the first time the application is run on a fresh database, otherwise a runtime error will result. For subsequent executions, you will likely want to comment it out again or remove it, but it does serve as a useful reminder. :)
+
+== OpenAI and Neo4j sample specifics
+
+Before running the OAI+Neo4j version, you'll need to have Neo4j running locally (or have an account on Aura). You can run it locally via Docker like so:
+
+`docker run -d --name myneo4j -p 7474:7474 -p 7473:7473 -p 7687:7687 hecklerm/neo4j`
+
+NOTE: You'll need to provide the required property values as specified for Neo4j as Vector Store in the https://docs.spring.io/spring-ai/reference/api/vectordbs/neo4j.html[Spring AI documentation].
 
 == Essential information for all versions
 

@@ -9,7 +9,6 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.model.Media;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
@@ -89,7 +88,7 @@ public class RagController {
     public String getRagResponse(@RequestParam(defaultValue = "Airspeeds") String message) {
         return client.prompt()
                 .user(message)
-                .advisors(new QuestionAnswerAdvisor(db, SearchRequest.defaults()))
+                .advisors(new QuestionAnswerAdvisor(db))
                 .call()
                 .content();
     }

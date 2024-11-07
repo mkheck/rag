@@ -13,10 +13,4 @@ public class NeoConfig {
         // Can be any other EmbeddingModel implementation.
         return new OpenAiEmbeddingModel(new OpenAiApi(System.getenv("SPRING_AI_OPENAI_API_KEY")));
     }
-
-    /*@Bean
-    public Driver driver() {
-        return GraphDatabase.driver("neo4j://<host>:<bolt-port>",
-                AuthTokens.basic("<username>", "<password>"));
-    }*/
 }

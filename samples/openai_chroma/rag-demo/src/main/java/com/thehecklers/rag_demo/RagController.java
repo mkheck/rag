@@ -2,11 +2,12 @@ package com.thehecklers.rag_demo;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+//import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.ai.model.Media;
+import org.springframework.ai.content.Media;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 @RestController
 public class RagController {
@@ -95,13 +99,17 @@ public class RagController {
 
     @GetMapping("/mm")
     public String getMultimodalResponse(@RequestParam(defaultValue = "/Users/markheckler/files/testimage.jpg") String imagePath,
-                                        @RequestParam(defaultValue = "What's in this image?") String message) throws MalformedURLException {
+                                        @RequestParam(defaultValue = "What's in this image?") String message) throws MalformedURLException, URISyntaxException {
         var imageType = imagePath.endsWith(".png") ? MimeTypeUtils.IMAGE_PNG : MimeTypeUtils.IMAGE_JPEG;
         var media = imagePath.startsWith("http")
-                ? new Media(imageType, new URL(imagePath))
+                ? new Media(imageType, new URI(imagePath))
                 : new Media(imageType, new FileSystemResource(imagePath));
 
-        var userMessage = new UserMessage(message, media);
+        //var userMessage = new UserMessage(message, List.of(media), null);
+        var userMessage = UserMessage.builder()
+                .text(message)
+                .media(media)
+                .build();
         var systemMessage = new SystemMessage("If you can't definitively identify the image, make your best guess.");
 
         return chatModel.call(userMessage, systemMessage);
@@ -109,7 +117,7 @@ public class RagController {
 
     @GetMapping("/imagerag")
     public String getImageRagResponse(@RequestParam(defaultValue = "/Users/markheckler/files/testimage.jpg") String imagePath,
-                                      @RequestParam(defaultValue = "Tell me everything you can about this image") String message) throws MalformedURLException {
+                                      @RequestParam(defaultValue = "Tell me everything you can about this image") String message) throws MalformedURLException, URISyntaxException {
         // First analyze the image using AI, then use RAG to search our docs for information specific to our domain
         return getRagResponse(getMultimodalResponse(imagePath, message));
     }

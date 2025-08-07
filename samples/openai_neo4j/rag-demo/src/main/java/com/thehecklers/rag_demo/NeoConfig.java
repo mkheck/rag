@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class NeoConfig {
-    @Bean
-    public EmbeddingModel embeddingModel() {
+	@Bean
+	EmbeddingModel embeddingModel() {
         // Can be any other EmbeddingModel implementation.
         return new OpenAiEmbeddingModel(new OpenAiApi(System.getenv("SPRING_AI_OPENAI_API_KEY")));
     }
